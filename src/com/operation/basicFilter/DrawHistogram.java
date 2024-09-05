@@ -22,17 +22,90 @@ public class DrawHistogram implements IOperation {
 				B[color.getBlue()]++;
 			}
 		}
-		for (int j = 0; j < 256; j++) {// resim içine sığdırmak için değerleri belli bir oranla azaltıyoruz
-			R[j] = R[j] / 10;
-			G[j] = G[j] / 10;
-			B[j] = B[j] / 10;
+
+		int globalMax = 0;
+		for (int i = 0; i < 256; i++) {
+			if (R[i] > globalMax)
+				globalMax = R[i];
+			if (G[i] > globalMax)
+				globalMax = G[i];
+			if (B[i] > globalMax)
+				globalMax = B[i];
 		}
 
-		drawHistRed(R);
-		drawHistGreen(G);
-		drawHistBlue(B);
+		drawHistRed(R, globalMax);
+		drawHistGreen(G, globalMax);
+		drawHistBlue(B, globalMax);
+
+//		drawHistRed(R);
+//		drawHistGreen(G);
+//		drawHistBlue(B);
 
 		return image;
+	}
+
+	private BufferedImage drawHistRed(int R[], int globalMax) {
+		BufferedImage hist = new BufferedImage(256, 500, BufferedImage.TYPE_INT_ARGB);
+		for (int i = 0; i < hist.getWidth(); i++) {
+			for (int j = 0; j < hist.getHeight(); j++) {
+				Color color = new Color(255, 0, 0);
+				hist.setRGB(i, j, color.getRGB());
+			}
+		}
+
+		for (int i = 0; i <= 255; i++) {
+			int scaledValue = (R[i] * hist.getHeight() - 1) / globalMax;
+			for (int j = 0; j <= scaledValue; j++) {
+				hist.setRGB(i, hist.getHeight() - j - 1, Integer.parseUnsignedInt("1111111111110000000000000000", 2));
+			}
+		}
+		HistogramWindow h = new HistogramWindow(hist);
+		h.title = "Kirmizi rengin histogrami";
+		h.main(null);
+		return hist;
+	}
+
+	private BufferedImage drawHistGreen(int G[], int globalMax) {
+		BufferedImage hist = new BufferedImage(256, 500, BufferedImage.TYPE_INT_ARGB);
+		for (int i = 0; i < hist.getWidth(); i++) {
+			for (int j = 0; j < hist.getHeight(); j++) {
+				Color color = new Color(0, 255, 0);
+				hist.setRGB(i, j, color.getRGB());
+			}
+		}
+
+		for (int i = 0; i <= 255; i++) {
+			int scaledValue = (G[i] * hist.getHeight() - 1) / globalMax;
+			System.out.println("scaled Value: " + scaledValue);
+			for (int j = 0; j <= scaledValue; j++) {
+				hist.setRGB(i, hist.getHeight() - j - 1, Integer.parseUnsignedInt("0000000011111111111100000000", 2));
+			}
+		}
+		HistogramWindow h2 = new HistogramWindow(hist);
+		h2.title = "Yesil rengin histogrami";
+		h2.main(null);
+		return hist;
+	}
+
+	private BufferedImage drawHistBlue(int B[], int globalMax) {
+		BufferedImage hist = new BufferedImage(256, 500, BufferedImage.TYPE_INT_ARGB);
+		for (int i = 0; i < hist.getWidth(); i++) {
+			for (int j = 0; j < hist.getHeight(); j++) {
+				Color color = new Color(0, 0, 255);
+				hist.setRGB(i, j, color.getRGB());
+			}
+		}
+
+		for (int i = 0; i <= 255; i++) {
+			int scaledValue = (B[i] * hist.getHeight() - 1) / globalMax;
+			for (int j = 0; j <= scaledValue; j++) {
+				hist.setRGB(i, hist.getHeight() - j - 1, Integer.parseUnsignedInt("0000000000000000111111111111", 2));
+			}
+		}
+		HistogramWindow h3 = new HistogramWindow(hist);
+		h3.title = "Mavi rengin histogrami";
+		h3.main(null);
+		return hist;
 	}
 
 	private BufferedImage drawHistRed(int R[]) {
@@ -44,6 +117,7 @@ public class DrawHistogram implements IOperation {
 				hist.setRGB(i, j, color.getRGB());
 			}
 		}
+
 		for (int i = 0; i <= 255; i++) {// her piksel degeri icin bir ust yukseklikteki pikseli boyadik
 			for (int j = 0; j <= R[i]; j++) {
 				hist.setRGB(i, 500 - j - 1, Integer.parseUnsignedInt("1111111111110000000000000000", 2));
@@ -56,41 +130,41 @@ public class DrawHistogram implements IOperation {
 	}
 
 	private BufferedImage drawHistGreen(int[] G) {
-		BufferedImage hist2 = new BufferedImage(256, 500, BufferedImage.TYPE_INT_ARGB);
-		for (int i = 0; i < hist2.getWidth(); i++) {
-			for (int j = 0; j < hist2.getHeight(); j++) {
+		BufferedImage hist = new BufferedImage(256, 500, BufferedImage.TYPE_INT_ARGB);
+		for (int i = 0; i < hist.getWidth(); i++) {
+			for (int j = 0; j < hist.getHeight(); j++) {
 				Color color = new Color(0, 255, 0);
-				hist2.setRGB(i, j, color.getRGB());
+				hist.setRGB(i, j, color.getRGB());
 			}
 		}
 		for (int i = 0; i <= 255; i++) {
 			for (int j = 0; j <= G[i]; j++) {
-				hist2.setRGB(i, 500 - j - 1, Integer.parseUnsignedInt("0000000011111111111100000000", 2));
+				hist.setRGB(i, 500 - j - 1, Integer.parseUnsignedInt("0000000011111111111100000000", 2));
 			}
 		}
-		HistogramWindow h2 = new HistogramWindow(hist2);
+		HistogramWindow h2 = new HistogramWindow(hist);
 		h2.title = "Yesil rengin histogrami";
 		h2.main(null);
-		return hist2;
+		return hist;
 	}
 
 	private BufferedImage drawHistBlue(int[] B) {
-		BufferedImage hist3 = new BufferedImage(256, 500, BufferedImage.TYPE_INT_ARGB);
-		for (int i = 0; i < hist3.getWidth(); i++) {
-			for (int j = 0; j < hist3.getHeight(); j++) {
+		BufferedImage hist = new BufferedImage(256, 500, BufferedImage.TYPE_INT_ARGB);
+		for (int i = 0; i < hist.getWidth(); i++) {
+			for (int j = 0; j < hist.getHeight(); j++) {
 				Color color = new Color(0, 0, 255);
-				hist3.setRGB(i, j, color.getRGB());
+				hist.setRGB(i, j, color.getRGB());
 			}
 		}
 		for (int i = 0; i <= 255; i++) {
 			for (int j = 0; j <= B[i]; j++) {
-				hist3.setRGB(i, 500 - j - 1, Integer.parseUnsignedInt("0000000000000000111111111111", 2));
+				hist.setRGB(i, 500 - j - 1, Integer.parseUnsignedInt("0000000000000000111111111111", 2));
 			}
 		}
-		HistogramWindow h3 = new HistogramWindow(hist3);
+		HistogramWindow h3 = new HistogramWindow(hist);
 		h3.title = "Mavi rengin histogrami";
 		h3.main(null);
-		return hist3;
+		return hist;
 	}
 
 	@Override
