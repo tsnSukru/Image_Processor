@@ -31,6 +31,7 @@ import com.operation.basicFilter.DrawHistogram;
 import com.operation.basicFilter.Grayscale;
 import com.operation.basicFilter.HistogramBalance;
 import com.operation.basicFilter.Negative;
+import com.operation.basicFilter.SaveGreen;
 import com.operation.basicFilter.Thresholding;
 import com.operation.geometricOperation.ImageReverse;
 import com.operation.geometricOperation.MirrorImage;
@@ -141,6 +142,7 @@ public class mainWindow {
 		operations.put("Histogram Dengeleme", new HistogramBalance());
 		operations.put("Histogramı Cizdir", new DrawHistogram());
 		operations.put("Parlaklık Ayarla", new Brightness());
+		operations.put("Yeşili Koru", new SaveGreen());
 
 		// high pass filter
 		operations.put("Laplacian", new LaplacianFilter());
@@ -479,6 +481,7 @@ public class mainWindow {
 		cbBasicOperations.addItem("Histogram Dengeleme");
 		cbBasicOperations.addItem("Histogramı Cizdir");
 		cbBasicOperations.addItem("Parlaklık Ayarla");
+		cbBasicOperations.addItem("Yeşili Koru");
 		cbBasicOperations.setBounds(12, 27, 212, 21);
 	}
 

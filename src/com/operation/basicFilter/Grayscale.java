@@ -1,5 +1,6 @@
 package com.operation.basicFilter;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import com.operation.IOperation;
@@ -10,18 +11,18 @@ public class Grayscale implements IOperation {
 	private BufferedImage convert(BufferedImage image) {
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				String pixel = Integer.toBinaryString(image.getRGB(i, j));
-				String alpha = pixel.substring(0, 8);
-				int red = Integer.parseInt(pixel.substring(8, 16), 2);
-				int green = Integer.parseInt(pixel.substring(16, 24), 2);
-				int blue = Integer.parseInt(pixel.substring(24, 32), 2);
+				int rgb = image.getRGB(i, j);
+
+				// Alfa kanalını koru
+				int alpha = (rgb >> 24) & 0xFF;
+
+				// RGB değerlerini al
+				int red = (rgb >> 16) & 0xFF;
+				int green = (rgb >> 8) & 0xFF;
+				int blue = rgb & 0xFF;
+
 				int average = (red + green + blue) / 3;
-				String avg = Integer.toBinaryString(average);
-				while (avg.length() < 8) {// eğer 8 bitten azsa sol taraftan 0 ekle
-					avg = "0" + avg;
-				}
-				String pixel2 = alpha + avg + avg + avg;
-				image.setRGB(i, j, Integer.parseUnsignedInt(pixel2, 2));
+				image.setRGB(i, j, new Color(average, average, average).getRGB());
 			}
 		}
 		return image;

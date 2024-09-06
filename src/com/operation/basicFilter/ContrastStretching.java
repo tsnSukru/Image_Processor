@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import com.operation.IOperation;
-import com.operation.utility.SplitIntoPixel;
 
 public class ContrastStretching implements IOperation {
 	private BufferedImage image;
@@ -15,32 +14,25 @@ public class ContrastStretching implements IOperation {
 		grayscale.setParameters(image);
 		image = grayscale.apply();// Griye cevirdik
 
-		int[][] pixels = new int[image.getWidth()][image.getHeight()];
-		SplitIntoPixel splitPixel = new SplitIntoPixel();
-		pixels = splitPixel.split(image);// pixellerine ulastik
+		int maxValue = new Color(image.getRGB(0, 0)).getRed();
+		int minValue = maxValue;
 
-		int maxValue = Integer.parseUnsignedInt((Integer.toBinaryString(pixels[0][0]).substring(8, 16)), 2);
-		for (int i = 0; i < pixels.length; i++) {// max degeri bulduk
-			for (int j = 0; j < pixels[0].length; j++) {
-				if (Integer.parseUnsignedInt((Integer.toBinaryString(pixels[i][j]).substring(8, 16)), 2) > maxValue) {
-					maxValue = Integer.parseUnsignedInt((Integer.toBinaryString(pixels[i][j]).substring(8, 16)), 2);
+		for (int i = 0; i < image.getWidth(); i++) { // Max ve min değerleri bul
+			for (int j = 0; j < image.getHeight(); j++) {
+				int redValue = new Color(image.getRGB(i, j)).getRed(); // Kırmızı değeri al
+				if (redValue > maxValue) {
+					maxValue = redValue;
 				}
-			}
-		}
-
-		int minValue = Integer.parseUnsignedInt((Integer.toBinaryString(pixels[0][0]).substring(8, 16)), 2);
-		for (int i = 0; i < pixels.length; i++) {// min degeri bulduk
-			for (int j = 0; j < pixels[0].length; j++) {
-				if (Integer.parseUnsignedInt((Integer.toBinaryString(pixels[i][j]).substring(8, 16)), 2) < minValue) {
-					minValue = Integer.parseUnsignedInt((Integer.toBinaryString(pixels[i][j]).substring(8, 16)), 2);
+				if (redValue < minValue) {
+					minValue = redValue;
 				}
 			}
 		}
 
 		Color color = new Color(0);
 		int a = 0;
-		for (int i = 0; i < pixels.length; i++) {// tum pikseller icin formul uygulandı
-			for (int j = 0; j < pixels[0].length; j++) {
+		for (int i = 0; i < image.getWidth(); i++) {// tum pikseller icin formul uygulandı
+			for (int j = 0; j < image.getHeight(); j++) {
 				color = new Color(image.getRGB(i, j));
 				a = ((color.getRed() - minValue) * 255) / (maxValue - minValue);
 				color = new Color(a, a, a);
